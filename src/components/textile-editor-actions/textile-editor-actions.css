@@ -1,0 +1,32 @@
+.rtjs-actions {
+    margin: 10px 0;
+    text-align: center;
+}
+.rtjs-actions .button-group {
+    display: inline-block;
+    margin-right: 5px;
+}
+.rtjs-actions .button-group:last-child {
+    margin-right: 0;
+}
+.rtjs-actions .button-group button {
+    border-radius: 0;
+    border-right-width: 0;
+    line-height: 20px;
+    width: 28px;
+    white-space: nowrap;
+}
+.rtjs-actions .button-group button:first-child {
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+}
+.rtjs-actions .button-group button:last-child {
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+    border-right-width: 1px;
+}
+.rtjs-actions .button-group button .subtext {
+    font-size: 8px;
+    display: inline-block;
+    line-height: 10px;
+}
