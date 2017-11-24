@@ -1,13 +1,13 @@
 // @flow
 
-export const ActionGroups = {
+export const ButtonGroups = {
   TEXT: 'text',
   ALIGN: 'align',
   LIST: 'list',
   HEADER: 'header',
   OTHER: 'other'
 };
-export type ActionGroup = $Keys<typeof ActionGroups>;
+export type ButtonGroup = $Keys<typeof ButtonGroups>;
 
 type Action_ = {|
   symbol: string,
@@ -33,7 +33,7 @@ type ActionButton_ = {|
   icon: string,
   subtext?: string,
   label: string,
-  group: ActionGroup,
+  group: ButtonGroup,
   action?: Action,
   prompt?: Prompt
 |}

@@ -1,10 +1,10 @@
 import type { ActionButton } from '../../flow-typed/textile-editor';
-import { ActionGroups } from '../../flow-typed/textile-editor';
+import { ButtonGroups } from '../../flow-typed/textile-editor';
 
 export const ActionsConfig: ActionButton[] = [{
   icon: 'bold',
   label: 'Bold',
-  group: ActionGroups.TEXT,
+  group: ButtonGroups.TEXT,
   action: {
     symbol: '*',
     wrap: true,
@@ -13,7 +13,7 @@ export const ActionsConfig: ActionButton[] = [{
 }, {
   icon: 'italic',
   label: 'Italic',
-  group: ActionGroups.TEXT,
+  group: ButtonGroups.TEXT,
   action: {
     symbol: '_',
     wrap: true,
@@ -22,7 +22,7 @@ export const ActionsConfig: ActionButton[] = [{
 }, {
   icon: 'underline',
   label: 'Underline',
-  group: ActionGroups.TEXT,
+  group: ButtonGroups.TEXT,
   action: {
     symbol: '+',
     wrap: true,
@@ -31,7 +31,7 @@ export const ActionsConfig: ActionButton[] = [{
 }, {
   icon: 'strikethrough',
   label: 'Strikethrough',
-  group: ActionGroups.TEXT,
+  group: ButtonGroups.TEXT,
   action: {
     symbol: '-',
     wrap: true,
@@ -40,7 +40,7 @@ export const ActionsConfig: ActionButton[] = [{
 }, {
   icon: 'subscript',
   label: 'Subscript',
-  group: ActionGroups.TEXT,
+  group: ButtonGroups.TEXT,
   action: {
     symbol: '~',
     wrap: true,
@@ -49,7 +49,7 @@ export const ActionsConfig: ActionButton[] = [{
 }, {
   icon: 'superscript',
   label: 'Superscript',
-  group: ActionGroups.TEXT,
+  group: ButtonGroups.TEXT,
   action: {
     symbol: '^',
     wrap: true,
@@ -58,7 +58,7 @@ export const ActionsConfig: ActionButton[] = [{
 }, {
   icon: 'align-left',
   label: 'Align left',
-  group: ActionGroups.ALIGN,
+  group: ButtonGroups.ALIGN,
   action: {
     symbol: 'p<.',
     wrap: false,
@@ -67,7 +67,7 @@ export const ActionsConfig: ActionButton[] = [{
 }, {
   icon: 'align-center',
   label: 'Align center',
-  group: ActionGroups.ALIGN,
+  group: ButtonGroups.ALIGN,
   action: {
     symbol: 'p=.',
     wrap: false,
@@ -76,7 +76,7 @@ export const ActionsConfig: ActionButton[] = [{
 }, {
   icon: 'align-right',
   label: 'Align right',
-  group: ActionGroups.ALIGN,
+  group: ButtonGroups.ALIGN,
   action: {
     symbol: 'p>.',
     wrap: false,
@@ -85,7 +85,7 @@ export const ActionsConfig: ActionButton[] = [{
 }, {
   icon: 'align-justify',
   label: 'Align justify',
-  group: ActionGroups.ALIGN,
+  group: ButtonGroups.ALIGN,
   action: {
     symbol: 'p<>.',
     wrap: false,
@@ -94,7 +94,7 @@ export const ActionsConfig: ActionButton[] = [{
 }, {
   icon: 'list-ul',
   label: 'Bullet list',
-  group: ActionGroups.LIST,
+  group: ButtonGroups.LIST,
   action: {
     symbol: '*',
     wrap: false,
@@ -103,7 +103,7 @@ export const ActionsConfig: ActionButton[] = [{
 }, {
   icon: 'list-ol',
   label: 'Numbered list',
-  group: ActionGroups.LIST,
+  group: ButtonGroups.LIST,
   action: {
     symbol: '#',
     wrap: false,
@@ -113,7 +113,7 @@ export const ActionsConfig: ActionButton[] = [{
   icon: 'header',
   label: 'Header 1',
   subtext: '1',
-  group: ActionGroups.HEADER,
+  group: ButtonGroups.HEADER,
   action: {
     symbol: 'h1.',
     wrap: false,
@@ -123,7 +123,7 @@ export const ActionsConfig: ActionButton[] = [{
   icon: 'header',
   label: 'Header 2',
   subtext: '2',
-  group: ActionGroups.HEADER,
+  group: ButtonGroups.HEADER,
   action: {
     symbol: 'h2.',
     wrap: false,
@@ -133,7 +133,7 @@ export const ActionsConfig: ActionButton[] = [{
   icon: 'header',
   label: 'Header 3',
   subtext: '3',
-  group: ActionGroups.HEADER,
+  group: ButtonGroups.HEADER,
   action: {
     symbol: 'h3.',
     wrap: false,
@@ -143,7 +143,7 @@ export const ActionsConfig: ActionButton[] = [{
   icon: 'header',
   label: 'Header 4',
   subtext: '4',
-  group: ActionGroups.HEADER,
+  group: ButtonGroups.HEADER,
   action: {
     symbol: 'h4.',
     wrap: false,
@@ -152,7 +152,7 @@ export const ActionsConfig: ActionButton[] = [{
 }, {
   icon: 'link',
   label: 'Link',
-  group: ActionGroups.OTHER,
+  group: ButtonGroups.OTHER,
   prompt: {
     inputs: [{
       label: 'Link text',
@@ -175,7 +175,7 @@ export const ActionsConfig: ActionButton[] = [{
 }, {
   icon: 'image',
   label: 'Image',
-  group: ActionGroups.OTHER,
+  group: ButtonGroups.OTHER,
   prompt: {
     inputs: [{
       label: 'Image URL',
@@ -190,7 +190,7 @@ export const ActionsConfig: ActionButton[] = [{
 }, {
   icon: 'quote-right',
   label: 'Blockquote',
-  group: ActionGroups.OTHER,
+  group: ButtonGroups.OTHER,
   action: {
     symbol: 'bq.',
     wrap: false,

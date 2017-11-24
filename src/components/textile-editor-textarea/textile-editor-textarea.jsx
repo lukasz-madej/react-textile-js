@@ -2,8 +2,9 @@
 
 import React, { Component } from 'react';
 import './textile-editor-textarea.css';
-import type { Action, InputObject } from '../../flow-typed/textile-editor';
-import { ActionGroups } from '../../flow-typed/textile-editor';
+import type { Action, ActionButton, InputObject } from '../../flow-typed/textile-editor';
+import { ButtonGroups } from '../../flow-typed/textile-editor';
+import { ActionsConfig } from '../textile-editor-actions/textile-editor-actions-config';
 
 type Props = {
   onTextChange: (string) => void,
@@ -18,11 +19,10 @@ type State = {
 
 class TextileEditorTextArea extends Component<Props, State> {
   wrapText = (text: string, action: Action, selectionStart: number = 0, selectionEnd: number = text.length): string => {
-    let space: string = action.spaced ? ' ' : '';
     return  text.slice(0, selectionStart) +
-            action.symbol + space +
+            this.getSymbol(action) +
             text.slice(selectionStart, selectionEnd) +
-            space + action.symbol +
+            this.getSymbol(action, true) +
             text.slice(selectionEnd);
   };
 
@@ -35,21 +35,20 @@ class TextileEditorTextArea extends Component<Props, State> {
 
   shouldUnwrapText = (text: string, action: Action, selectionStart: number, selectionEnd: number): boolean => {
     let offset: number = this.calculateOffset(action),
-        seed: string = action.symbol + (action.spaced ? ' ' : ''),
+        seed: string = this.getSymbol(action),
         selectionStartSymbol: string = text.slice(selectionStart, selectionStart + offset),
         selectionEndSymbol: string = text.slice(selectionEnd - offset, selectionEnd);
     return selectionStartSymbol === seed && selectionEndSymbol === seed;
   };
 
   insertSymbol = (text: string, action: Action, selectionStart: number = 0): string => {
-    let space: string = action.spaced ? ' ' : '';
     if (action.wrap) {
       return  text.slice(0, selectionStart) +
-        action.symbol + space + space + action.symbol +
+        this.getSymbol(action) + this.getSymbol(action, true) +
         text.slice(selectionStart);
     }
     return  text.slice(0, selectionStart) +
-            action.symbol + space +
+            this.getSymbol(action) +
             text.slice(selectionStart);
   };
 
@@ -61,15 +60,22 @@ class TextileEditorTextArea extends Component<Props, State> {
 
   shouldRemoveSymbol = (text: string, action: Action, selectionStart: number): boolean => {
     let offset: number = this.calculateOffset(action),
-      seed: string = action.symbol + (action.spaced ? ' ' : ''),
+      seed: string = this.getSymbol(action),
       selectionStartSymbol: string = text.slice(selectionStart, selectionStart + offset);
     return selectionStartSymbol === seed;
   };
 
-  insertText = (text: string, toInsert: string, selectionStart: number): string => {
+  insertText = (text: string, toInsert: string, selectionStart: number, atNewLine: boolean = false): string => {
+    let newLine: string = atNewLine ? '\n' : '';
     return  text.slice(0, selectionStart) +
+      newLine +
       toInsert +
       text.slice(selectionStart);
+  };
+
+  setValue = (text: string): void => {
+    let textarea = this.refs.textarea;
+    textarea.value = text;
   };
 
   calculateOffset = (action: Action): number => {
@@ -85,19 +91,49 @@ class TextileEditorTextArea extends Component<Props, State> {
     return subtract ? selectionEnd - length : selectionEnd + length;
   };
 
+  setCursorPosition = (position: number): void => {
+    let textarea = this.refs.textarea;
+    textarea.focus();
+    textarea.selectionEnd = position;
+  };
+
+  getSymbol = (action: Action, reverse: boolean = false): string => {
+    let space: string = action.spaced ? ' ' : '';
+    return reverse ? space + action.symbol : action.symbol + space;
+  };
+
   triggerTextChange = ():void => {
     let text: string = this.refs.textarea.value;
     this.props.onTextChange(text);
   };
 
-  checkForListAfterNewline = (event?: SyntheticInputEvent<HTMLInputElement>): string => {
-    let text: string = this.refs.textarea.value;
-    if (event && event.which === 13 && this.state.action) {
-      if (this.state.action.group === ActionGroups.LIST) {
-        console.log('asd');
-      }
+  handleKeyboardEvents = (event: SyntheticInputEvent<HTMLInputElement>): void => {
+    let textarea = this.refs.textarea,
+        text: string = textarea.value,
+        selectionStart: number = textarea.selectionStart;
+
+    if (event.which === 13) {
+      let textBefore = text.slice(0, selectionStart),
+          textBeforeLastNewline = textBefore.split('\n').pop(),
+          listButtons: ActionButton[] = ActionsConfig.filter((button: ActionButton): boolean => {
+            return button.group === ButtonGroups.LIST;
+          });
+
+      listButtons.some((button: ActionButton): boolean => {
+        let symbol = this.getSymbol(button.action),
+            potentialSymbol = textBeforeLastNewline.substring(0, symbol.length);
+
+        if (symbol === potentialSymbol) {
+          if (textBeforeLastNewline.length > symbol.length) {
+            event.preventDefault();
+            this.setValue(this.insertText(text, symbol, selectionStart, true));
+            this.setCursorPosition(selectionStart + symbol.length + 1);
+          }
+          return true;
+        }
+        return false;
+      });
     }
-    return text;
   };
 
   componentWillReceiveProps(nextProps: Props): void {
@@ -119,10 +155,8 @@ class TextileEditorTextArea extends Component<Props, State> {
         }
       });
 
-      textarea.value = this.insertText(text, objectText, selectionStart);
-      textarea.focus();
-      textarea.selectionEnd = selectionStart + objectText.length;
-
+      this.setValue(this.insertText(text, objectText, selectionStart));
+      this.setCursorPosition(selectionStart + objectText.length);
       this.setState({
         actionObjects: nextProps.actionObjects
       }, (): void => {
@@ -131,29 +165,30 @@ class TextileEditorTextArea extends Component<Props, State> {
     }
 
     else if (nextProps.action && nextProps.action !== this.props.action) {
+      let value: string = '';
+
       if (textSelected) {
         if (nextProps.action.wrap) {
           if (this.shouldUnwrapText(text, nextProps.action, selectionStart, selectionEnd)) {
-            textarea.value = this.unwrapText(text, nextProps.action, selectionStart, selectionEnd);
+            value = this.unwrapText(text, nextProps.action, selectionStart, selectionEnd);
             subtract = true;
           } else {
-            textarea.value = this.wrapText(text, nextProps.action, selectionStart, selectionEnd);
+            value = this.wrapText(text, nextProps.action, selectionStart, selectionEnd);
           }
         } else {
           if (this.shouldRemoveSymbol(text, nextProps.action, selectionStart)) {
-            textarea.value = this.removeSymbol(text, nextProps.action, selectionStart);
+            value = this.removeSymbol(text, nextProps.action, selectionStart);
             subtract = true;
           } else {
-            textarea.value = this.insertSymbol(text, nextProps.action, selectionStart);
+            value = this.insertSymbol(text, nextProps.action, selectionStart);
           }
         }
       } else {
-        textarea.value = this.insertSymbol(text, nextProps.action, selectionStart);
+        value = this.insertSymbol(text, nextProps.action, selectionStart);
       }
 
-      textarea.focus();
-      textarea.selectionEnd = this.calculateCursorPosition(nextProps.action, selectionStart, selectionEnd, subtract);
-
+      this.setValue(value);
+      this.setCursorPosition(this.calculateCursorPosition(nextProps.action, selectionStart, selectionEnd, subtract));
       this.setState({
         action: nextProps.action
       }, (): void => {
@@ -164,7 +199,7 @@ class TextileEditorTextArea extends Component<Props, State> {
 
   render() {
     return (
-      <textarea ref="textarea" onChange={this.triggerTextChange} onKeyPress={this.checkForListAfterNewline}></textarea>
+      <textarea ref="textarea" onKeyPress={this.handleKeyboardEvents}></textarea>
     );
   }
 }
